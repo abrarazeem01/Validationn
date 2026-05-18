@@ -1,0 +1,36 @@
+name: Validation Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Run Tests
+      run: npm test
+
+    - name: Generate Validation Logs
+      run: |
+        mkdir logs
+        npm test > logs/test-log.txt
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: validation-artifacts
+        path: logs/
